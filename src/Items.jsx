@@ -2,15 +2,23 @@ import { useQuery } from '@tanstack/react-query';
 import SingleItem from './SingleItem';
 import customFetch from './utils';
 
-const Items = ({ items }) => {
-  const result = useQuery({
+const Items = () => {
+  const { isLoading, data, error } = useQuery({
     queryKey: ['tasks'],
-    queryFn: () => customFetch.get('/'),
+    queryFn: async () => customFetch.get('/'),
   });
-  console.log(result);
+
+  if (isLoading) {
+    return <p>Loading...</p>;
+  }
+  if (error) {
+    return <p>{error.message}</p>;
+  }
+
   return (
     <div className='items'>
-      {items.map((item) => {
+      {/* dat.data because axios and react query both use data so it creates that nested structure */}
+      {data.data.taskList.map((item) => {
         return <SingleItem key={item.id} item={item} />;
       })}
     </div>
